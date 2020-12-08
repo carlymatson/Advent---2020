@@ -19,14 +19,14 @@ def isValid(_ID):
         print "Invalid birth year: " + str(byr)
         return False
     if  (iyr < 2010) or (iyr > 2020):
-        print "Invalid issue year: " + str(byr)
+        print "Invalid issue year: " + str(iyr)
         return False
     if  (eyr < 2020) or (eyr > 2030):
-        print "Invalid expiration year: " + str(byr)
+        print "Invalid expiration year: " + str(eyr)
         return False
     if re.match("[0-9]+(cm|in)$", hgt):
         hgtNum = int(hgt[:-2])
-        if hgt[-2:] == "cm":
+        if hgt[-2:] == "cm": 
             if (hgtNum < 150) or (hgtNum > 193):
                 print "Invalid height: " + str(hgt)
                 return False
@@ -50,28 +50,29 @@ def isValid(_ID):
 
 
 
-
-lineCount = 0
+# This will be used to put the data of each ID field into a list, which we will then parse into a dictionary.
 fields = []
 validCount = 0
 endOfFile = False
 while not endOfFile:
     s = inFile.readline()
+    # A truly empty string is the end of the file.
     if s == "":
         endOfFile = True
+    # We remove the newline character from the end of each string.
     s = s.strip()
+    # Blank line - Create an ID (a dictionary) out of previous entries.
     if s == "":
-        # Create dictionary out of previous entries
         newID = {}
         for entry in fields:
             newID.update({entry.split(':')[0] : entry.split(':')[1]})
-        #print("New ID: " + str(newID))
+        # Check validity of this ID.
         if isValid(newID):
             validCount += 1
-        # Start a new dictionary
+        # Start a new list of ID fields and repeat.
         fields = []
+    # If the line isn't blank, split up the ID fields and add them to the running list.
     else:
         fields.extend(s.split(" "))
-    lineCount += 1
 
 print validCount
