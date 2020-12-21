@@ -1,31 +1,35 @@
-inFile = open("day2input.text", 'r')
+file = open("day2input.text", 'r')
 
+def part1_check(num_pair, character, password):
+    char_counter = 0
+    for char_ in password:
+        if char_ == character:
+            char_counter += 1
+    if (char_counter >= num_pair[0]) and (char_counter <= num_pair[1]):
+        return True
+    return False
 
-inputLines = inFile.readlines()
+def part2_check(num_pair, character, password):
+    char_counter = 0
+    if password[num_pair[0]-1] == character:
+        char_counter += 1
+    if password[num_pair[1]-1] == character:
+        char_counter += 1
+    if char_counter == 1:
+        return True
+    return False
 
-validCount = 0
+file_lines = file.readlines()
+num_valid = 0
+for line in file_lines:
+    # Lines are in format "#1-#2 char: password".
+    rule_password = line.split(':')
+    nums_char = rule_password[0].split(' ')
+    num_pair = [int(num) for num in nums_char[0].split('-')]
+    character = nums_char[1]
+    password = rule_password[1].strip()
+    if part2_check(num_pair, character, password):
+        num_valid += 1
 
-for _str in inputLines:
-    _str_pair = _str.split(':')
-    _rule_pair = _str_pair[0].split(' ')
-    _min_max = [int(num) for num in _rule_pair[0].split('-')]
-    _character = _rule_pair[1]
-    _password = _str_pair[1].strip()
-    #print _min_max
-    #print _character
-    #print _password
-    charCount = 0
-    #for i in range(len(_password)):
-    #    if _password[i] == _character:
-    #        charCount += 1
-    if _password[_min_max[0]-1] == _character:
-        charCount += 1
-    if _password[_min_max[1]-1] == _character:
-        charCount += 1
-    #print charCount
-    #if (charCount >= _min_max[0]) and (charCount <= _min_max[1]):
-    if charCount % 2 == 1:
-        validCount += 1
-        #print "It's valid"
+print("Valid count: %d"%(num_valid))
 
-print "Valid count: " + str(validCount)
