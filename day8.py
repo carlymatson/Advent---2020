@@ -1,53 +1,59 @@
 inFile = open("day8input.text", 'r')
 
-def run(_code):
+def run(code):
     accumulator = 0
-    seen = set()
+    history = set()
     pointer = 0
     looping = False
     while not looping:
-        # Determine whether the program has finished running.
-        if pointer >= len(_code):
-            print "Terminated correctly"
+        if pointer >= len(code):
+            print("Terminated correctly.")
             return True, accumulator
-        if pointer in seen:
-            #print "Looping"
+        if pointer in history:
+            #print("Looping.")
             return False, accumulator
-        seen.add(pointer)
-        # Compute next operation.
-        instr = _code[pointer]
-        pair = instr.split(" ")
-        oper = pair[0]
-        val = int(pair[1])
-        if oper == "nop":
+        history.add(pointer)
+        instruction = code[pointer]
+        oper_arg = instruction.split(" ")
+        operator = oper_arg[0]
+        argument = int(oper_arg[1])
+        if operator == "nop":
             pointer += 1
-        elif oper == "acc":
-            accumulator += val
+        elif operator == "acc":
+            accumulator += argument
             pointer += 1
-        elif oper == "jmp":
-            pointer += val
+        elif operator == "jmp":
+            pointer += argument
         else:
-            print "Oh no! Invalid operation:" + str(oper)
+            print("Oh no! Invalid operatoration: %s"%(instruction))
 
-instructionOriginal = inFile.readlines()
-accumulatorFinal = 0
+code_original = inFile.readlines()
+accumulator_final = 0
 
-for i in range(len(instructionOriginal)):
-    codeCopy = list(instructionOriginal)
-    changed = False
-    inst = instructionOriginal[i]
-    if inst.split(" ")[0] == "nop":
-        codeCopy[i] = "jmp" + str(" ") + inst.split(" ")[1]
-        changed = True
-    elif inst.split(" ")[0] == "jmp":
-        codeCopy[i] = "nop" + str(" ") + inst.split(" ")[1]
-        changed = True
-    if changed:
-        m = run(codeCopy)
-        if m[0]: # If it terminated correctly, this should be True.
-            accumulatorFinal = m[1]
-            break
-    else:
-        continue
+def part1():
+    result = run(code_original)
+    print("Accumulator value just before looping: %d"%(result[1]))
+    return True
 
-print "Accumulator: " + str(accumulatorFinal)
+def part2():
+    for i in range(len(code_original)):
+        code_copy = list(code_original)
+        changed = False
+        instruction = code_original[i]
+        if instruction.split(" ")[0] == "nop":
+            code_copy[i] = "jmp" + str(" ") + instruction.split(" ")[1]
+            changed = True
+        elif instruction.split(" ")[0] == "jmp":
+            code_copy[i] = "nop" + str(" ") + instruction.split(" ")[1]
+            changed = True
+        if changed:
+            result = run(code_copy)
+            if result[0]: # If it terminated correctly, this should be True.
+                accumulator_final = result[1]
+                break
+        else:
+            continue
+    print("Accumulator after terminating correctly: %d"%(accumulator_final))
+
+part1()
+part2()

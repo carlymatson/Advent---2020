@@ -1,50 +1,49 @@
-inFile = open("day18input.text", 'r')
-inLines = inFile.readlines()
+file = open("day18input.text", 'r')
+file_lines = file.readlines()
 
 import re
 
 # This is necessary for finding and substituting, since regex treats "()+*" as special characters.
-def getLiteral(_str):
-    _str = re.sub("\*", r"\*", _str)
-    _str = re.sub("\+", r"\+", _str)
-    _str = re.sub("\(", r"\(", _str)
-    _str = re.sub("\)", r"\)", _str)
-    return _str
+def get_literal(expression):
+    expression = re.sub("\*", r"\*", expression)
+    expression = re.sub("\+", r"\+", expression)
+    expression = re.sub("\(", r"\(", expression)
+    expression = re.sub("\)", r"\)", expression)
+    return expression
 
 
-def eval(_str):
+def eval(expression):
     # If there are parentheses, resolve those first.
-    while re.search(r"\([0-9+* ]*\)", _str):
-        parenBlock = re.findall(r"\([0-9+* ]*\)", _str)[0]
-        val = eval(parenBlock[1:-1])
-        _str = re.sub(getLiteral(parenBlock), str(val), _str)
-    while re.search(r"\*", _str):
+    while re.search(r"\([0-9+* ]*\)", expression):
+        parenthetical = re.findall(r"\([0-9+* ]*\)", expression)[0]
+        value = eval(parenthetical[1:-1])
+        expression = re.sub(get_literal(parenthetical), str(value), expression)
+    while re.search(r"\*", expression):
         # Split and evaluate each part, then return product.
-        prodParts = _str.split("*")
-        prod = 1
-        for s in prodParts:
+        product_parts = expression.split("*")
+        product = 1
+        for p in product_parts:
             try:
-                val = int(s)
+                value = int(p)
             except:
-                val = eval(s)
-            prod *= val
-        return prod
+                value = eval(p)
+            product *= value
+        return product
     # If there are no parentheses or multiplication, split and add.
-    summands = _str.split("+")
-    sum = 0
+    summands = expression.split("+")
+    sum_ = 0
     for s in summands:
         try:
-            val = int(s)
+            value = int(s)
         except:
-            print "Something went wrong"
-            val = 0
-        sum += val
-    return sum
+            print("Something went wrong")
+            value = 0
+        sum_ += value
+    return sum_
 
-# Evaluate each expression and add them all up.
+# Main.
 total = 0
-for exp in inLines:
-    n = eval(exp)
-    total += n
-
-print total
+for expression in file_lines[:2]:
+    value = eval(expression)
+    total += value
+print(total)
